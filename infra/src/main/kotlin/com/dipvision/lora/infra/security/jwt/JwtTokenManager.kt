@@ -5,8 +5,8 @@ import com.dipvision.lora.common.exception.CustomException
 import com.dipvision.lora.common.exception.GlobalExceptionDetail
 import com.dipvision.lora.core.auth.exception.AuthExceptionDetails
 import com.dipvision.lora.core.member.MemberHolder
+import com.dipvision.lora.core.member.details.MemberDetails
 import io.jsonwebtoken.*
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -68,7 +68,12 @@ class JwtTokenManager(
 
     fun authenticate(payload: Claims): Authentication {
         val member = memberDetailsService.loadUserByUsername(payload.subject)
-        return  UsernamePasswordAuthenticationToken(member, null, setOf())
+        val lastModifiedDate = (member as MemberDetails).member.lastPasswordModified
+        
+        if (payload.issuedAt.toInstant().isBefore(lastModifiedDate))
+            throw CustomException(AuthExceptionDetails.EXPIRED_TOKEN) // Password validation
+        
+        return JwtAuthToken(member, setOf())
     }
 
     override fun validate(jwt: String): Authentication {

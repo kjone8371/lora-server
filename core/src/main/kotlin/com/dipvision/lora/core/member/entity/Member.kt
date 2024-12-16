@@ -5,6 +5,7 @@ import com.dipvision.lora.core.common.id.WrappedLong
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import java.time.Instant
 
 @Entity(name = "tb_member")
 data class Member(
@@ -16,6 +17,9 @@ data class Member(
 
     @Column(nullable = false)
     val name: String,
+    
+    @Column(nullable = false)
+    val lastPasswordModified: Instant = Instant.now(),
 
     @Id
     val id: WrappedLong = WrappedLong.NULL
