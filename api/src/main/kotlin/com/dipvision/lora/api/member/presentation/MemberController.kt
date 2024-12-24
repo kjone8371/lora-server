@@ -18,6 +18,14 @@ class MemberController(
     @GetMapping("/me")
     fun me(): ResponseEntity<ResponseData<MemberInfoResponse>> {
         val me = memberService.me()
-        return ResponseData.ok(data = MemberInfoResponse(me.name))
+        
+        val data = MemberInfoResponse(
+            me.name,
+            me.phone,
+            me.groupName,
+            me.permissions,
+            me.id
+        )
+        return ResponseData.ok(data = data)
     }
 }
