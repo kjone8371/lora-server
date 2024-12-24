@@ -1,7 +1,7 @@
 package com.dipvision.lora.infra.security.providers
 
 import com.dipvision.lora.common.exception.CustomException
-import com.dipvision.lora.common.exception.GlobalExceptionDetail
+import com.dipvision.lora.common.exception.GlobalExceptionDetails
 import com.dipvision.lora.infra.security.jwt.JwtAuthToken
 import com.dipvision.lora.infra.security.jwt.TokenValidator
 import org.springframework.security.authentication.AuthenticationProvider
@@ -14,7 +14,7 @@ class JwtProvider(
 ) : AuthenticationProvider {
     override fun authenticate(authentication: Authentication?): Authentication {
         val jwt = authentication?.credentials?.toString()
-            ?: throw CustomException(GlobalExceptionDetail.INTERNAL_SERVER_ERROR)
+            ?: throw CustomException(GlobalExceptionDetails.INTERNAL_SERVER_ERROR)
 
         return validator.validate(jwt)
     }

@@ -3,7 +3,7 @@ package com.dipvision.lora.infra.exception
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.dipvision.lora.common.exception.CustomException
 import com.dipvision.lora.common.exception.ExceptionDetail
-import com.dipvision.lora.common.exception.GlobalExceptionDetail
+import com.dipvision.lora.common.exception.GlobalExceptionDetails
 import com.dipvision.lora.common.response.ResponseError
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -24,7 +24,7 @@ class AuthExceptionHandleFilter(private val mapper: ObjectMapper) : OncePerReque
             response.writeJson(e.detail, *e.formats)
         } catch (e: Exception) {
             e.printStackTrace()
-            response.writeJson(GlobalExceptionDetail.INTERNAL_SERVER_ERROR)
+            response.writeJson(GlobalExceptionDetails.INTERNAL_SERVER_ERROR)
         }
     }
 

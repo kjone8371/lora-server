@@ -1,7 +1,7 @@
 package com.dipvision.lora.infra.exception
 
 import com.dipvision.lora.common.exception.CustomException
-import com.dipvision.lora.common.exception.GlobalExceptionDetail
+import com.dipvision.lora.common.exception.GlobalExceptionDetails
 import com.dipvision.lora.common.response.ResponseError
 import com.dipvision.lora.core.auth.exception.AuthExceptionDetails
 import org.slf4j.LoggerFactory
@@ -22,7 +22,7 @@ class ExceptionHandlerAdvice {
     @ExceptionHandler(Exception::class)
     fun exception(e: Exception?): ResponseEntity<ResponseError> {
         log.error("Error while processing request: ", e)
-        return ResponseError.of(GlobalExceptionDetail.INTERNAL_SERVER_ERROR)
+        return ResponseError.of(GlobalExceptionDetails.INTERNAL_SERVER_ERROR)
     }
 
     @ExceptionHandler(CustomException::class)
@@ -32,25 +32,25 @@ class ExceptionHandlerAdvice {
 
     @ExceptionHandler(MissingServletRequestParameterException::class)
     fun missingParameter(e: MissingServletRequestParameterException): ResponseEntity<ResponseError> {
-        return ResponseError.of(GlobalExceptionDetail.PARAMETER_NOT_MATCH, e.parameterName, e.parameterType)
+        return ResponseError.of(GlobalExceptionDetails.PARAMETER_NOT_MATCH, e.parameterName, e.parameterType)
     }
 
     @ExceptionHandler(NoResourceFoundException::class)
     fun noResourceFound(e: NoResourceFoundException): ResponseEntity<ResponseError> {
-        return ResponseError.of(GlobalExceptionDetail.RESOURCE_NOT_FOUND, e.resourcePath)
+        return ResponseError.of(GlobalExceptionDetails.RESOURCE_NOT_FOUND, e.resourcePath)
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
     fun httpRequestMethodNotSupportedException(e: HttpRequestMethodNotSupportedException) =
-        ResponseError.of(GlobalExceptionDetail.METHOD_NOT_SUPPORTED, e.method, e.supportedMethods?.joinToString("', '") ?: "N/A")
+        ResponseError.of(GlobalExceptionDetails.METHOD_NOT_SUPPORTED, e.method, e.supportedMethods?.joinToString("', '") ?: "N/A")
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun httpMessageNotReadableException(e: HttpMessageNotReadableException) =
-        ResponseError.of(GlobalExceptionDetail.UNPROCESSABLE_BODY)
+        ResponseError.of(GlobalExceptionDetails.UNPROCESSABLE_BODY)
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException::class)
     fun httpMediaTypeNotSupportedException(e: HttpMediaTypeNotSupportedException) =
-        ResponseError.of(GlobalExceptionDetail.UNSUPPORTED_MEDIA_TYPE, e.contentType, e.supportedMediaTypes.takeIf { it.isNotEmpty() }?.joinToString("', '") ?: "N/A")
+        ResponseError.of(GlobalExceptionDetails.UNSUPPORTED_MEDIA_TYPE, e.contentType, e.supportedMediaTypes.takeIf { it.isNotEmpty() }?.joinToString("', '") ?: "N/A")
 
     @ExceptionHandler
     fun badCredentialsException(e: BadCredentialsException) =

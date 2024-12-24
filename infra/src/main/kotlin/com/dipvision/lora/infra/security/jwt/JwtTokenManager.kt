@@ -2,7 +2,7 @@ package com.dipvision.lora.infra.security.jwt
 
 import com.dipvision.lora.core.auth.extern.TokenGenerator
 import com.dipvision.lora.common.exception.CustomException
-import com.dipvision.lora.common.exception.GlobalExceptionDetail
+import com.dipvision.lora.common.exception.GlobalExceptionDetails
 import com.dipvision.lora.core.auth.exception.AuthExceptionDetails
 import com.dipvision.lora.core.member.MemberHolder
 import com.dipvision.lora.core.member.details.MemberDetails
@@ -102,7 +102,7 @@ class JwtTokenManager(
             throw e
         } catch (e: Exception) {
             e.printStackTrace()
-            throw CustomException(GlobalExceptionDetail.INTERNAL_SERVER_ERROR)
+            throw CustomException(GlobalExceptionDetails.INTERNAL_SERVER_ERROR)
         }
     }
 }
