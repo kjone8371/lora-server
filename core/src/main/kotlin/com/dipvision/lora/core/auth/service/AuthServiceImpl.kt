@@ -48,9 +48,9 @@ class AuthServiceImpl(
         authenticationManager.authenticate(oldRequest) // this will validate things
         
         memberRepository.save(
-            me.copy(
+            me.apply {
                 password = passwordEncoder.encode(newPassword)
-            )
+            }
         )
         
         val newRequest = UsernamePasswordAuthenticationToken(me.credential, newPassword)

@@ -7,13 +7,14 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import java.time.Instant
 
-@Entity(name = "tb_member")
-data class Member(
+@Entity
+@Table(name = "tb_member")
+class Member(
     @Column(unique = true, nullable = false)
     val credential: String,
 
     @Column(nullable = false)
-    val password: String, // bcrypt
+    var password: String, // bcrypt
 
     @Column(nullable = false)
     val name: String,
@@ -22,5 +23,10 @@ data class Member(
     val lastPasswordModified: Instant = Instant.now(),
 
     @Id
-    val id: WrappedLong = WrappedLong.NULL
-) : BaseTimeEntity()
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    val id: WrappedLong = WrappedLong.NULL,
+) : BaseTimeEntity() {
+    override fun toString(): String {
+        return "Member(credential=$credential, password=TRUNCATED, name=$name, phone=$phone, group=${group?.name}, lastPasswordModified=$lastPasswordModified, id=${id.get})"
+    }
+}
