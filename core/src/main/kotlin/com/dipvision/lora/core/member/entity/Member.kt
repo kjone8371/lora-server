@@ -2,9 +2,7 @@ package com.dipvision.lora.core.member.entity
 
 import com.dipvision.lora.core.common.entity.BaseTimeEntity
 import com.dipvision.lora.core.common.id.WrappedLong
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
+import com.dipvision.lora.core.group.entity.Group
 import jakarta.persistence.*
 import java.time.Instant
 
@@ -20,6 +18,10 @@ class Member(
     @Column(nullable = false)
     val name: String,
     
+    @ManyToOne
+    @JoinColumn(name = "group_id", nullable = true)
+    var group: Group? = null,
+
     @Column(nullable = false)
     val lastPasswordModified: Instant = Instant.now(),
 
