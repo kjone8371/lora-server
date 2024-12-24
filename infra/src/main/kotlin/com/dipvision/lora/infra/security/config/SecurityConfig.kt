@@ -16,7 +16,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 class SecurityConfig(
     private val authFilter: JwtAuthFilter,
-    private val authExceptionFilter: AuthExceptionHandleFilter
+    private val authExceptionFilter: AuthExceptionHandleFilter,
 ) {
 
     @Bean
@@ -28,7 +28,9 @@ class SecurityConfig(
             .sessionManagement { it.disable() }
             .authorizeHttpRequests {
                 it
+                    .requestMatchers("/auth/password", "/auth/refresh").authenticated()
                     .requestMatchers("/auth/**").anonymous() // .permitAll()
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()
             }
             .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter::class.java)
@@ -39,7 +41,8 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource() = UrlBasedCorsConfigurationSource()
         .apply {
-            registerCorsConfiguration("/**",
+            registerCorsConfiguration(
+                "/**",
                 CorsConfiguration()
                     .apply { // kotlin style builder
                         addAllowedOriginPattern("*")
