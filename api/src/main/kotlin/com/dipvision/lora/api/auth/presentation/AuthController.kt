@@ -6,6 +6,7 @@ import com.dipvision.lora.api.auth.dto.request.NewTokenRequestDto
 import com.dipvision.lora.api.auth.dto.response.TokenResponseDto
 import com.dipvision.lora.business.auth.service.AuthService
 import com.dipvision.lora.common.response.ResponseData
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -31,6 +32,7 @@ class AuthController(
     }
 
     @PostMapping("/refresh")
+    @SecurityRequirement(name = "Authorization")
     fun refreshAccessToken(@RequestBody @Valid request: NewTokenRequestDto): ResponseEntity<ResponseData<TokenResponseDto>> {
         val dto = authService.getNewToken(request.refreshToken)
         return ResponseData.ok(data = TokenResponseDto(dto.accessToken, dto.refreshToken))

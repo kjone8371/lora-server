@@ -22,3 +22,13 @@ app:
     access_expires_after: 86400000
     refresh_expires_after: 172800000
     issuer: jombi
+
+springdoc:
+  api-docs:
+    enabled: true
+  enable-kotlin: true
+  enable-javadoc: true
+  swagger-ui:
+    enabled: true
+  trim-kotlin-indent: true
+  use-fqn: true
