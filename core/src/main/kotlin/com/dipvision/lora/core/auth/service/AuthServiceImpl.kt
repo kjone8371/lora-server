@@ -33,12 +33,23 @@ class AuthServiceImpl(
         return generateToken()
     }
 
-    override fun createNewMember(name: String, credential: String, password: String): Long {
+    override fun createNewMember(
+        name: String,
+        credential: String,
+        password: String,
+        phone: String,
+    ): Long {
         if (memberRepository.existsByCredential(credential))
             throw CustomException(AuthExceptionDetails.USER_ALREADY_EXISTS, credential)
 
-        return memberRepository.save(Member(credential, passwordEncoder.encode(password), name))
-            .id.get
+        return memberRepository.save(
+            Member(
+                credential,
+                passwordEncoder.encode(password),
+                name,
+                phone,
+            )
+        ).id.get
     }
 
     override fun editPassword(oldPassword: String, newPassword: String): TokenDto {

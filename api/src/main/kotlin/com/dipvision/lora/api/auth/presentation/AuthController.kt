@@ -28,7 +28,13 @@ class AuthController(
 
     @PostMapping("/register")
     fun createMember(@RequestBody @Valid request: CreateMemberRequest): ResponseEntity<ResponseData<Long>> {
-        val userId = authService.createNewMember(request.name, request.credential, request.password)
+        val userId = authService.createNewMember(
+            request.name,
+            request.credential,
+            request.password,
+            request.phone,
+        )
+
         return ResponseData.ok(data = userId)
     }
 

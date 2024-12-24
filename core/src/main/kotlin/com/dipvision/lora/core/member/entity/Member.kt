@@ -17,7 +17,10 @@ class Member(
 
     @Column(nullable = false)
     val name: String,
-    
+
+    @Column(nullable = false)
+    val phone: String,
+
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = true)
     var group: Group? = null,
