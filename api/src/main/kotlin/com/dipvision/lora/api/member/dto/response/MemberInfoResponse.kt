@@ -1,5 +1,5 @@
 package com.dipvision.lora.api.member.dto.response
 
-data class MemberInfoResponseDto(
+data class MemberInfoResponse(
     val name: String
 )

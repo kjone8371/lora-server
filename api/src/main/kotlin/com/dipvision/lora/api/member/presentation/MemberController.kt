@@ -1,6 +1,6 @@
 package com.dipvision.lora.api.member.presentation
 
-import com.dipvision.lora.api.member.dto.response.MemberInfoResponseDto
+import com.dipvision.lora.api.member.dto.response.MemberInfoResponse
 import com.dipvision.lora.business.member.service.MemberService
 import com.dipvision.lora.common.response.ResponseData
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
@@ -16,9 +16,8 @@ class MemberController(
     private val memberService: MemberService
 ) {
     @GetMapping("/me")
-    fun me(): ResponseEntity<ResponseData<MemberInfoResponseDto>> {
+    fun me(): ResponseEntity<ResponseData<MemberInfoResponse>> {
         val me = memberService.me()
-
-        return ResponseData.ok(data = MemberInfoResponseDto(me.name))
+        return ResponseData.ok(data = MemberInfoResponse(me.name))
     }
 }
