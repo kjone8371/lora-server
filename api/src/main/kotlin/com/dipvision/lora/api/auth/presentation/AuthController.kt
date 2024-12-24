@@ -10,6 +10,7 @@ import com.dipvision.lora.common.response.ResponseData
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -36,6 +37,13 @@ class AuthController(
         )
 
         return ResponseData.ok(data = userId)
+    }
+
+    @PatchMapping("/password")
+    @SecurityRequirement(name = "Authorization")
+    fun changePassword(@RequestBody @Valid request: ChangePasswordRequest): ResponseEntity<ResponseData<TokenResponse>> {
+        val dto = authService.editPassword(request.oldPassword, request.newPassword)
+        return ResponseData.ok(data = TokenResponse(dto.accessToken, dto.refreshToken, dto.passwordChangeAlert))
     }
 
     @PostMapping("/refresh")
