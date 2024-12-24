@@ -71,7 +71,7 @@ class AuthServiceImpl(
     }
     
     private fun shouldChangePassword(me: Member = holder.get()): Boolean {
-        val threeMonthsAgo = Instant.now().minus(Period.ofMonths(3))
+        val threeMonthsAgo = ZonedDateTime.now().minus(Period.ofMonths(3)).toInstant()
         return threeMonthsAgo.isAfter(me.lastPasswordModified)
     }
     
