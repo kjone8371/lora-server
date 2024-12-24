@@ -1,10 +1,10 @@
 package com.dipvision.lora.core.auth.service
 
 import com.dipvision.lora.business.auth.dto.TokenDto
-import com.dipvision.lora.core.auth.extern.TokenGenerator
 import com.dipvision.lora.business.auth.service.AuthService
 import com.dipvision.lora.common.exception.CustomException
 import com.dipvision.lora.core.auth.exception.AuthExceptionDetails
+import com.dipvision.lora.core.auth.extern.TokenGenerator
 import com.dipvision.lora.core.member.MemberHolder
 import com.dipvision.lora.core.member.entity.Member
 import com.dipvision.lora.core.member.repository.MemberJpaRepository
@@ -13,8 +13,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import java.time.Instant
 import java.time.Period
+import java.time.ZonedDateTime
 
 @Service
 class AuthServiceImpl(
