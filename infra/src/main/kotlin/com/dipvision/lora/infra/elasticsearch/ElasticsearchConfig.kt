@@ -1,13 +1,12 @@
 package com.dipvision.lora.infra.elasticsearch
 
+import org.apache.http.ssl.SSLContexts
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.DefaultResourceLoader
 import org.springframework.data.elasticsearch.client.ClientConfiguration
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration
 import java.security.KeyStore
 import java.security.cert.CertificateFactory
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManagerFactory
 import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchProperties as SpringElasticsearchProperties
 
 
@@ -26,16 +25,14 @@ class ElasticsearchConfig(
                 .inputStream.use {
                     CertificateFactory.getInstance("X.509").generateCertificate(it)
                 }
-            
-            val keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
+
+            val keyStore = KeyStore.getInstance("pkcs12")
             keyStore.load(null, null)
-            keyStore.setCertificateEntry("server", certificate)
+            keyStore.setCertificateEntry("ca", certificate)
 
-            val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-            trustManagerFactory.init(keyStore)
-
-            val sslContext = SSLContext.getInstance("TLS")
-            sslContext.init(null, trustManagerFactory.trustManagers, null)
+            val sslContext = SSLContexts.custom()
+                .loadTrustMaterial(keyStore, null)
+                .build()
 
             builder.usingSsl(sslContext)
         }
