@@ -9,34 +9,34 @@ import jakarta.persistence.*
 @Table(name = "tb_facility")
 class Facility(
     @Column(nullable = false)
-    var name: String,
+    var name: String, // 관리 번호
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    var type: FacilityType,
+    var type: FacilityType, // 시설물 명칭
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    var status: FacilityStatus,
+    var status: FacilityStatus, // 시설 상태
 
     @Column(nullable = false)
-    var address: String,
+    var address: String, // 시설물 주소
     @Column(nullable = false)
-    var latitude: Double,
+    var latitude: Double, // 위도
     @Column(nullable = false)
-    var longitude: Double,
+    var longitude: Double, // 경도
 
     @Column(name = "filter_one", nullable = true)
-    val filter1: String? = null,
+    val filter1: String? = null, // 필터1
     @Column(name = "filter_two", nullable = true)
-    val filter2: String? = null,
+    val filter2: String? = null, // 필터2
 
     @Column(name = "qr", nullable = true)
-    val qr: String? = null,
+    val qr: String? = null, //QR 코드
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: WrappedLong = WrappedLong.NULL,
+    val id: WrappedLong = WrappedLong.NULL, //No
 ) {
     companion object;
 }
