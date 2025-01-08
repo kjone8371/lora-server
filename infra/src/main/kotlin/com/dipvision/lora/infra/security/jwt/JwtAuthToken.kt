@@ -5,21 +5,21 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class JwtAuthToken : AbstractAuthenticationToken {
-    private val credentials: Any
+    private val principal: Any
     
     constructor(jwt: String) : super(emptyList()) {
-        credentials = jwt
+        principal = jwt
         super.setAuthenticated(false)
     }
     
     constructor(userDetails: UserDetails, authorities: Set<String>) : super(authorities.map { SimpleGrantedAuthority(it) }) {
-        credentials = userDetails
+        principal = userDetails
         super.setAuthenticated(true)
     }
     
-    override fun getCredentials(): Any = credentials
+    override fun getCredentials(): Any? = null // credential is not needed on jwt
 
-    override fun getPrincipal(): Any? = null// principal is not needed on jwt
+    override fun getPrincipal(): Any = principal
 
     override fun setAuthenticated(authenticated: Boolean) {
         // no bypass

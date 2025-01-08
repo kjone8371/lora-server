@@ -13,7 +13,7 @@ class JwtProvider(
     private val validator: TokenValidator
 ) : AuthenticationProvider {
     override fun authenticate(authentication: Authentication?): Authentication {
-        val jwt = authentication?.credentials?.toString()
+        val jwt = authentication?.principal?.toString()
             ?: throw CustomException(GlobalExceptionDetails.INTERNAL_SERVER_ERROR)
 
         return validator.validate(jwt)
