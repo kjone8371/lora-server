@@ -70,6 +70,7 @@ class AuthServiceImpl(
         
         return generateToken(me)
     }
+    
 
     override fun getNewToken(refreshToken: String): TokenDto {
         val newAccessToken = tokenGenerator.refreshToNewToken(refreshToken)

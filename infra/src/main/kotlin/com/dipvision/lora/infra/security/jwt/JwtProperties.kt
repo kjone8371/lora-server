@@ -23,6 +23,10 @@ class JwtProperties(
 ) {
     private var _key: SecretKey? = null
 
+    init {
+        println("JWT Secret: $secret")  // 확인용 로그
+    }
+
     @OptIn(ExperimentalEncodingApi::class)
     fun secretKey(): SecretKey {
         if (_key == null) _key = Keys.hmacShaKeyFor(Base64.decode(secret))

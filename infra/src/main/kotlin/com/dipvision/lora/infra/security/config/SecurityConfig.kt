@@ -30,6 +30,7 @@ class SecurityConfig(
                 it
                     .requestMatchers("/auth/password", "/auth/refresh").authenticated()
                     .requestMatchers("/auth/**").anonymous() // .permitAll()
+                    .requestMatchers("/facilities/**").authenticated()
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()
             }
@@ -53,3 +54,4 @@ class SecurityConfig(
             )
         }
 }
+

@@ -15,9 +15,9 @@ import java.util.*
 
 @Component
 class JwtTokenManager(
-    private val jwtProperties: JwtProperties,
-    private val memberContext: MemberHolder,
-    private val memberDetailsService: UserDetailsService
+    private val jwtProperties: JwtProperties, // JWT 구성 정보를 담은 객체.
+    private val memberContext: MemberHolder, //현재 요청을 보낸 사용자의 정보를 보유하는 컨텍스트 객체.
+    private val memberDetailsService: UserDetailsService // 사용자의 세부 정보를 로드하는 서비스.
 ) : TokenGenerator, TokenValidator {
     override fun generateAccessToken(): String {
         return generateToken(JwtType.ACCESS_TOKEN)

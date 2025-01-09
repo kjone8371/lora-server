@@ -46,6 +46,7 @@ class AuthController(
         return ResponseData.ok(data = TokenResponse(dto.accessToken, dto.refreshToken, dto.passwordChangeAlert))
     }
 
+
     @PostMapping("/refresh")
     @SecurityRequirement(name = "Authorization")
     fun refreshAccessToken(@RequestBody @Valid request: NewTokenRequest): ResponseEntity<ResponseData<TokenResponse>> {

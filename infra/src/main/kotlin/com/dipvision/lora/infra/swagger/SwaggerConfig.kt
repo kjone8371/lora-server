@@ -20,7 +20,7 @@ class SwaggerConfig {
         )
         info(
             Info()
-                .title("Lora Server API")
+                .title("lora Server API")
                 .version("v1.0.0")
         )
     }

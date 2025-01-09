@@ -50,7 +50,7 @@ class FacilityController(
     @GetMapping("/{id}")
     fun findFacilitiesByName(@PathVariable id: Long) = facilityService.findById(id)
 
-    @PostMapping
+    @PostMapping("/")
     fun createFacility(@Valid @RequestBody request: FacilityCreateRequest): ResponseEntity<ResponseData<FacilityDto>> {
         val dto = facilityService.createFacility(
             FacilityCreateDto(
