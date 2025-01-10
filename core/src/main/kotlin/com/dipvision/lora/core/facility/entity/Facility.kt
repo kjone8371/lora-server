@@ -4,6 +4,7 @@ import com.dipvision.lora.business.facility.consts.FacilityStatus
 import com.dipvision.lora.business.facility.consts.FacilityType
 import com.dipvision.lora.core.common.id.WrappedLong
 import jakarta.persistence.*
+import org.w3c.dom.Text
 
 @Entity
 @Table(name = "tb_facility")
@@ -20,7 +21,7 @@ class Facility(
     var status: FacilityStatus, // 시설 상태
 
     @Column(nullable = false)
-    var address: String, // 시설물 주소
+    var address: String, // 시설물 주소 (지번)
     @Column(nullable = false)
     var latitude: Double, // 위도
     @Column(nullable = false)
