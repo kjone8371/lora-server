@@ -28,7 +28,7 @@ class FacilityDocument(
 //            facility.status,
 
             facility.address,
-            GeoPoint(facility.longitude, facility.latitude),
+            GeoPoint(facility.latitude, facility.longitude),
         )
     }
 }
