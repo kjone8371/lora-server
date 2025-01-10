@@ -32,16 +32,20 @@ class FacilityElasticQueryRepositoryImpl(
                 )
                 .field(FacilityDocument::point.name)
         }
-
+        // 부정 쿼리가 아닌 'must' 조건으로 변경하여 실제 거리에 포함되는 시설들을 찾음
         val boolQuery = QueryBuilders.bool {
-            it.mustNot(geoQuery)
+            it.must(geoQuery)  // 정확한 거리 내의 시설을 검색하기 위해 'must' 사용
         }
+
+        // NativeQuery 설정
         val query = NativeQuery.builder()
-            .withQuery(boolQuery)
+            .withQuery(boolQuery)  // 'must' 조건을 포함한 쿼리
             .build()
 
+        // 검색 결과 반환
         return elasticsearchOperations.search(query, FacilityDocument::class.java)
-            .map { it.content }.toList()
+            .map { it.content }
+            .toList()
     }
 
     override fun findByAddress(address: String, pageable: ElasticPageRequest): SlicedResponse<FacilityDocument> {
