@@ -11,4 +11,4 @@ data class FacilityCreateDto(
     val address: String,
     val latitude: Double,
     val longitude: Double,
-)
+    )
