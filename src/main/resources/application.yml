@@ -1,9 +1,9 @@
 spring:
   application.name: spring_templates
   datasource:
-    url: jdbc:mariadb://${DATASOURCE_URL}/${DATASOURCE_PATH}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
+    url: jdbc:mariadb://localhost:3306/dipvision
+    username: root
+    password: 7590sa12
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
@@ -19,21 +19,27 @@ spring:
         enabled: true
   elasticsearch:
     username: ${ELASTIC_USERNAME:elastic}
-    password: ${ELASTIC_PASSWORD}
+    password: ${ELASTIC_PASSWORD:5Ysf5gis}
     uris: ${ELASTIC_URI:localhost:9200}
 server:
   shutdown: graceful
 
 app:
   jwt:
-    secret: ${JWT_SECRET}
+    secret: ecfdbdde8fc46213543520cc52241aece11f40a09c1f15574c27eca1c9e8ca0463404efb845ee8d472474fde51136398f0ac4ac56be93f8b83ea9a155ee3da5b
     access_expires_after: 86400000
     refresh_expires_after: 172800000
     issuer: jombi
   elasticsearch:
-    is-ssl: ${ELASTIC_CERT_ENABLED}
-    certificate: ${ELASTIC_CERT_PATH}
-    cert-password: ${ELASTIC_CERT_PASSWORD}
+    is-ssl: ${ELASTIC_CERT_ENABLED:false}
+    certificate: ${ELASTIC_CERT_PATH:}
+    cert-password: ${ELASTIC_CERT_PASSWORD:}
+  server:
+    port: 8443
+    ssl:
+      key-store: classpath:keystore.p12
+      key-store-password:
+      key-store-type: PKCS12
 
 springdoc:
   api-docs:

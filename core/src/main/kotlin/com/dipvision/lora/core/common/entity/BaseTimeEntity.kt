@@ -1,8 +1,6 @@
 package com.dipvision.lora.core.common.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.EntityListeners
-import jakarta.persistence.MappedSuperclass
+import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -20,4 +18,16 @@ abstract class BaseTimeEntity(
 ) {
     val createdAt get() = _createdAt
     val updatedAt get() = _updatedAt
+
+//    @PrePersist
+//    fun prePersist() {
+//        val now = LocalDateTime.now()
+//        _createdAt = now
+//        _updatedAt = now
+//    }
+//
+//    @PreUpdate
+//    fun preUpdate() {
+//        _updatedAt = LocalDateTime.now()
+//    }
 }

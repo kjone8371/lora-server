@@ -13,6 +13,8 @@ import com.dipvision.lora.business.facility.consts.FacilityType
 import com.dipvision.lora.core.facility.findSafe
 import com.dipvision.lora.core.facility.repository.FacilityJpaRepository
 import com.dipvision.lora.core.facility.repository.FacilitySearchRepository
+import com.dipvision.lora.core.facility.repository.elastic.FacilityElasticQueryRepository
+import com.dipvision.lora.core.facility.repository.elastic.FacilityElasticRepository
 import com.dipvision.lora.core.facility.toDto
 import com.dipvision.lora.core.member.MemberHolder
 import org.springframework.stereotype.Service
@@ -46,6 +48,7 @@ class FacilityServiceImpl(
 
         return SlicedResponse(slice.hasNext(), slice.size, found.map { it.toDto() })
     }
+
 
     override fun findFacilitiesByAddress(address: String, page: Int, size: Int): SlicedResponse<FacilityDto> {
         memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
