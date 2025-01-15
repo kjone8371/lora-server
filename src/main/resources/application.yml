@@ -1,10 +1,16 @@
 spring:
   application.name: spring_templates
   datasource:
-    url: jdbc:mariadb://${DATASOURCE_URL}/${DATASOURCE_PATH}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
+    url: jdbc:mariadb://localhost:3306/lora
+    username: root
+    password: 7590sa12
     driver-class-name: org.mariadb.jdbc.Driver
+
+#    spring:
+#      web:
+#        resources:
+#          add-mappings: true
+
 
   jpa:
     hibernate:
@@ -19,21 +25,21 @@ spring:
         enabled: true
   elasticsearch:
     username: ${ELASTIC_USERNAME:elastic}
-    password: ${ELASTIC_PASSWORD}
+    password: ${ELASTIC_PASSWORD:lAiO34cN}
     uris: ${ELASTIC_URI:localhost:9200}
 server:
   shutdown: graceful
 
 app:
   jwt:
-    secret: ${JWT_SECRET}
+    secret: 600644a6c4c8803e0218a3d0f078eae9d6a8071d3889ee302c99ba2cec91afc92015a39f2c1ad1201eccd12e60ecba2e9b17f885b04ef3f2137d01edd5f07c7a
     access_expires_after: 86400000
     refresh_expires_after: 172800000
     issuer: jombi
   elasticsearch:
-    is-ssl: ${ELASTIC_CERT_ENABLED}
-    certificate: ${ELASTIC_CERT_PATH}
-    cert-password: ${ELASTIC_CERT_PASSWORD}
+    is-ssl: ${ELASTIC_CERT_ENABLED:false}
+    certificate: ${ELASTIC_CERT_PATH:}
+    cert-password: ${ELASTIC_CERT_PASSWORD:}
 
 springdoc:
   api-docs:

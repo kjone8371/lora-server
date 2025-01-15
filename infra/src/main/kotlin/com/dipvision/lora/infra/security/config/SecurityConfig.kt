@@ -24,11 +24,14 @@ class SecurityConfig(
         return http
             .httpBasic { it.disable() }
             .csrf { it.disable() }
+//            .cors{it.disable()}
             .cors { it.configurationSource(corsConfigurationSource()) }
             .sessionManagement { it.disable() }
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/auth/password", "/auth/refresh").authenticated()
+                    .requestMatchers("facilities/**").authenticated()
+                    .requestMatchers("/groups/**").authenticated()
                     .requestMatchers("/auth/**").anonymous() // .permitAll()
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()
@@ -44,8 +47,11 @@ class SecurityConfig(
             registerCorsConfiguration(
                 "/**",
                 CorsConfiguration()
-                    .apply { // kotlin style builder
-                        addAllowedOriginPattern("*")
+                    .apply {
+                        addAllowedOriginPattern("http://localhost:3000")
+                        addAllowedOriginPattern("https://the-one-led.vercel.app")
+                        addAllowedOriginPattern("https://front-end-git-main-kyumin1219s-projects.vercel.app")
+                        addAllowedOriginPattern("https://1e5a-218-233-244-111.ngrok-free.app") // ngrok 주소 허용
                         addAllowedHeader("*")
                         addAllowedMethod("*")
                         allowCredentials = true
