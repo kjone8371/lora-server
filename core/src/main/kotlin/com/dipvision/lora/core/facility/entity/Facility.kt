@@ -60,7 +60,7 @@ class Facility(
     @JoinColumn(name = "image_id", nullable = false)
     var image: Image,  // Image 엔티티를 참조
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     var memo: String, // 메모
 
     @Id
