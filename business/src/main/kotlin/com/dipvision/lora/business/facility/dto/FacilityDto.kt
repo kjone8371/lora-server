@@ -32,6 +32,4 @@ data class FacilityDto(
     val powerConsumption: String?,
     val billingType: String?,
 
-
-
 )
