@@ -41,6 +41,16 @@ app:
     certificate: ${ELASTIC_CERT_PATH:}
     cert-password: ${ELASTIC_CERT_PASSWORD:}
 
+    # 나중에는 없애야 함
+    app:
+      bucket:
+        localDirectory: C:/images
+
+# 나중에 주석 풀어야 함.
+#  image:
+#    manager-type: ${MANAGER_TYPE:LOCAL}
+
+
 springdoc:
   api-docs:
     enabled: true
@@ -50,3 +60,8 @@ springdoc:
     enabled: true
   trim-kotlin-indent: true
   use-fqn: true
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    com.dipvision.lora.api.facility.controller.FacilityController: DEBUG  # 'yourpackage'는 실제 패키지 이름으로 바꿔주세요.

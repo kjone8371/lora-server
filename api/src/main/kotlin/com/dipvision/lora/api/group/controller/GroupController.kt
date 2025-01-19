@@ -15,26 +15,26 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/groups")
 @SecurityRequirement(name = "Authorization")
-@CrossOrigin(origins = ["https://1e5a-218-233-244-111.ngrok-free.app"])
+//@CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app"])
 class GroupController(
     private val groupService: GroupService,
 ) {
     @GetMapping
-    @CrossOrigin(origins = ["https://1e5a-218-233-244-111.ngrok-free.app/groups"])
+//    @CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app/groups"])
     fun getAllGroups(): ResponseEntity<ResponseData<List<GroupPreviewDto>>> {
         val groups = groupService.getAvailableGroups()
         return ResponseData.ok(data = groups)
     }
     
     @GetMapping("/{uuid}")
-    @CrossOrigin(origins = ["https://1e5a-218-233-244-111.ngrok-free.app/groups/{uuid}"])
+//    @CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app/groups/{uuid}"])
     fun getGroup(@PathVariable uuid: String): ResponseEntity<ResponseData<GroupDto>> {
         val dto = groupService.getGroupByUUID(uuid)
         return ResponseData.ok(data = dto)
     }
 
     @PatchMapping("/{groupId}/permissions")
-    @CrossOrigin(origins = ["https://1e5a-218-233-244-111.ngrok-free.app/groups/{groupId}/permissions"])
+//    @CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app/groups/{groupId}/permissions"])
     fun editGroupPermissions(
         @PathVariable groupId: String,
         @RequestBody request: GroupPermissionEditRequest,
@@ -44,14 +44,14 @@ class GroupController(
     }
 
     @PostMapping
-    @CrossOrigin(origins = ["https://1e5a-218-233-244-111.ngrok-free.app/groups"])
+//    @CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app/groups"])
     fun addGroup(@Valid @RequestBody groups: GroupCreateRequest): ResponseEntity<ResponseData<GroupDto>> {
         val group = groupService.createGroup(groups.name, groups.permissions)
         return ResponseData.ok(data = group)
     }
 
     @PostMapping("/{groupId}/users")
-    @CrossOrigin(origins = ["https://1e5a-218-233-244-111.ngrok-free.app/groups/{groupId}/users"])
+//    @CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app/groups/{groupId}/users"])
     fun addUserToGroup(
         @PathVariable groupId: String,
         @RequestBody dto: GroupAddUserRequest,
@@ -61,7 +61,7 @@ class GroupController(
     }
     
     @DeleteMapping("/{groupId}/users/{userId}")
-    @CrossOrigin(origins = ["https://1e5a-218-233-244-111.ngrok-free.app/groups/{groupId}/users/{userId}"])
+//    @CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app/groups/{groupId}/users/{userId}"])
     fun addUserToGroup(
         @PathVariable groupId: String,
         @PathVariable userId: Long

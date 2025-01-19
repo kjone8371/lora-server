@@ -3,10 +3,8 @@ package com.dipvision.lora.core.facility.entity
 import com.dipvision.lora.business.facility.consts.FacilityStatus
 import com.dipvision.lora.business.facility.consts.FacilityType
 import com.dipvision.lora.core.common.id.WrappedLong
-import com.dipvision.lora.core.facility.image.Image
+import com.dipvision.lora.core.image.entity.Image
 import jakarta.persistence.*
-import org.springframework.web.multipart.MultipartFile
-import org.w3c.dom.Text
 
 @Entity
 @Table(name = "tb_facility")
@@ -31,9 +29,6 @@ class Facility(
     @Column(nullable = false)
     var longitude: Double, // Longitude: 128.6354975
 
-    @Column(name = "meter_number", nullable = false)
-    var meterNumber: String, // MeterNumber: "M45678"
-
     @Column(nullable = false)
     var department: String, // Department: "Plaza Lighting"
 
@@ -55,13 +50,33 @@ class Facility(
 //    @Column(name = "qr", nullable = true)
 //    val qr: String? = null, // QR code for identification
 
-    // 이미지 엔티티와의 관계 설정
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id", nullable = false)
-    var image: Image,  // Image 엔티티를 참조
+
+    @JoinColumn(name = "image_id", nullable = true)
+    @ManyToOne(cascade = [CascadeType.DETACH])
+    var image: Image?,
 
     @Column(nullable = false, length = 2000)
     var memo: String, // 메모
+
+    // 전화번호 필드 - 010-1234-1234-00 형태
+    @Column(nullable = false)
+    var phoneNumber: String,  // 예: "010-1234-1234-00"
+
+    // 에스코 상태
+    @Column(nullable = false)
+    var escoStatus: String,  // 예: "ACTIVE", "INACTIVE" 등
+
+    // 전력 소비
+    @Column(nullable = false)
+    var powerConsumption: String,  // 예: "250kWh"
+
+    // 청구 유형
+    var billingType: String,  // 예: "MONTHLY", "PAY-AS-YOU-GO"
+
+
+    @OneToOne(orphanRemoval = true, cascade = [CascadeType.ALL], mappedBy = "facility")
+    @JoinColumn(name = "facilityRemote_id")
+    var remoteInfo: FacilityRemoteInfo? = null,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

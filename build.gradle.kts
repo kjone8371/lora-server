@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
-    kotlin("jvm") version "1.9.24"
+    kotlin("jvm") version "2.0.0"
 
     id("org.springframework.boot") version "3.4.0"
     id("io.spring.dependency-management") version "1.1.5"
 
-    kotlin("plugin.jpa") version "1.9.24"
-    kotlin("plugin.spring") version "1.9.24"
+    kotlin("plugin.jpa") version "2.0.0"
+    kotlin("plugin.spring") version "2.0.0"
 }
 
 repositories {
@@ -24,7 +24,7 @@ allprojects {
     apply(plugin = "org.jetbrains.kotlin.plugin.spring")
     apply(plugin = "org.jetbrains.kotlin.plugin.jpa")
 
-    group = "dev.jombi"
+    group = "dev.kjone8371"
     version = "0.0.1-SNAPSHOT"
 
     dependencyManagement {
@@ -43,7 +43,7 @@ allprojects {
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlin {
-            jvmToolchain(17)
+            jvmToolchain(21)
             compilerOptions {
                 languageVersion.set(KotlinVersion.KOTLIN_1_9)
                 apiVersion.set(KotlinVersion.KOTLIN_1_9)
@@ -86,6 +86,7 @@ dependencies {
     implementation(project(":business"))
     implementation(project(":core"))
     implementation(project(":infra"))
+
 
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 }

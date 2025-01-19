@@ -15,13 +15,18 @@ data class FacilityEditRequest(
     val latitude: Double?,
     val longitude: Double?,
 
-    val meterNumber: String?,
     val department: String?,
     val fixture: String?,
     val poleFormat: String?,
     val dimmer: String?,
 
-    val imageFilename: String?,  // 수정된 이미지 파일명
     val memo: String?,
+
+    val phoneNumber: String?,
+    val escoStatus: String?,
+    val powerConsumption: String?,
+    val billingType: String?,
+
+
 
 )

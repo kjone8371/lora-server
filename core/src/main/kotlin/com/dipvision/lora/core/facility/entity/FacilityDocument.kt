@@ -5,6 +5,9 @@ import org.springframework.data.elasticsearch.annotations.Field
 import org.springframework.data.elasticsearch.annotations.FieldType
 import org.springframework.data.elasticsearch.annotations.Setting
 import org.springframework.data.elasticsearch.core.geo.GeoPoint
+import org.springframework.data.geo.Point
+
+
 
 @Document(indexName = "facility")
 @Setting(settingPath = "elastic/nori.json")
@@ -17,7 +20,8 @@ class FacilityDocument(
 
     @Field(type = FieldType.Search_As_You_Type, analyzer = "nori", searchAnalyzer = "nori")
     val address: String,
-    val point: GeoPoint,
+    val point: GeoPoint?
+
 ) {
     companion object {
         fun fromEntity(facility: Facility) = FacilityDocument(
@@ -28,7 +32,12 @@ class FacilityDocument(
 //            facility.status,
 
             facility.address,
-            GeoPoint(facility.latitude, facility.longitude),
+            if (facility.latitude != null && facility.longitude != null) {
+                GeoPoint(facility.latitude, facility.longitude)
+            } else {
+                null
+            }
+//            GeoPoint(facility.latitude, facility.longitude),
         )
     }
 }
