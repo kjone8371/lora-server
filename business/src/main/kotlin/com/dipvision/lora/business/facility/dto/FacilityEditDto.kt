@@ -23,5 +23,4 @@ data class FacilityEditDto(
     val escoStatus: String?,
     val powerConsumption: String?,
     val billingType: String?,
-
 )
