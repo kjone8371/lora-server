@@ -82,6 +82,7 @@ subprojects {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation(project(":api"))
     implementation(project(":business"))
     implementation(project(":core"))

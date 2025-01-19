@@ -3,6 +3,7 @@ package com.dipvision.lora.api.image
 import com.dipvision.lora.business.image.dto.ImageDto
 import com.dipvision.lora.business.image.service.ImageService
 import com.dipvision.lora.common.response.ResponseData
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -15,6 +16,7 @@ import java.net.URLConnection
 
 @RestController
 @RequestMapping("/images")
+@SecurityRequirement(name = "Authorization")
 class ImageController(
     private val imageService: ImageService,
 ) {

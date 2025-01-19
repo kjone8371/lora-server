@@ -9,6 +9,7 @@ import com.dipvision.lora.core.remote.entity.Remote
 import com.dipvision.lora.core.remote.repository.RemoteJpaRepository
 import io.github.davidepianca98.MQTTClient
 import io.github.davidepianca98.mqtt.MQTTVersion
+import io.github.davidepianca98.mqtt.Subscription
 import io.github.davidepianca98.mqtt.packets.Qos
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
@@ -23,26 +24,26 @@ private val logger = LoggerFactory.getLogger(MqttPool::class.java)
 @Component
 @OptIn(ExperimentalUnsignedTypes::class)
 class MqttPool(
-    private val remoteJpaRepository: RemoteJpaRepository
+    private val remoteJpaRepository: RemoteJpaRepository,
 ) : MqttConnection {
     private final val mqttWorkerPool = Executors.newVirtualThreadPerTaskExecutor()
         .asCoroutineDispatcher()
-    
+
     private final val queue: MutableMap<WrappedLong, MQTTClient> = Collections.synchronizedMap(mutableMapOf())
-    
+
     @PreDestroy
     fun destroy() {
         mqttWorkerPool.close()
     }
-    
+
     @PostConstruct
     fun queueAllClients() {
         for (remote in remoteJpaRepository.findAll()) {
             createClient(remote)
         }
     }
-    
-    fun createClient(remote: Remote) {
+
+    override fun createClient(remote: Remote) {
         val client = MQTTClient(
             MQTTVersion.MQTT5,
             tls = null,
@@ -70,8 +71,22 @@ class MqttPool(
         }
         queueMqttClient(client)
         queue[remote.id] = client
+
+        logger.info("Connection created for ${remote.address}:${remote.port}!")
     }
-    
+
+    override fun listen(info: FacilityRemoteInfo) {
+        val mqtt = queue[info.remote.id]!!
+
+        mqtt.subscribe(
+            listOf(
+                Subscription(
+                    "TheOne/Server/${info.phone}/Data"
+                )
+            )
+        )
+    }
+
     private fun UByteArray.toRawByteArray(): ByteArray {
         val arr = toByteArray().toMutableList()
         val list = arrayListOf<Byte>()
@@ -82,14 +97,14 @@ class MqttPool(
         }
         return list.toByteArray()
     }
-    
+
     fun queueMqttClient(mqtt: MQTTClient) {
         mqtt.runSuspend(mqttWorkerPool)
     }
 
     override fun send(info: FacilityRemoteInfo, packet: SPacket) {
         val mqtt = queue[info.remote.id]!!
-        
+
         mqtt.publish(
             false,
             Qos.AT_LEAST_ONCE,

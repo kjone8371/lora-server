@@ -75,7 +75,6 @@ class Facility(
 
 
     @OneToOne(orphanRemoval = true, cascade = [CascadeType.ALL], mappedBy = "facility")
-    @JoinColumn(name = "facilityRemote_id")
     var remoteInfo: FacilityRemoteInfo? = null,
 
     @Id

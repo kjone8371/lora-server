@@ -23,6 +23,7 @@ import com.dipvision.lora.core.facility.toDto
 import com.dipvision.lora.core.image.service.ImageInternalService
 import com.dipvision.lora.core.member.MemberHolder
 import com.dipvision.lora.core.remote.delegate.MqttConnection
+import com.dipvision.lora.core.remote.entity.Remote
 import com.dipvision.lora.core.remote.findSafe
 import com.dipvision.lora.core.remote.repository.RemoteJpaRepository
 import jakarta.persistence.LockModeType
@@ -33,6 +34,9 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import kotlin.math.*
+import org.springframework.retry.annotation.Retryable
+import org.springframework.retry.annotation.Backoff
+import org.springframework.dao.OptimisticLockingFailureException
 
 
 
@@ -374,8 +378,12 @@ class FacilityServiceImpl(
         facilitySearchRepository.delete(FacilityDocument.fromEntity(facility))
     }
 
-
-
+    @Retryable(
+        value = [OptimisticLockingFailureException::class],
+        maxAttempts = 3,
+        backoff = Backoff(delay = 1000)
+    )
+    @Transactional(rollbackFor = [Exception::class])
     override fun setupFacilityRemote(id: Long, dto: FacilityRemoteInfoCreateDto): FacilityRemoteInfoDto {
         val (
             remoteId: Long,
@@ -391,17 +399,49 @@ class FacilityServiceImpl(
 
         val info = facilityRemoteInfoRepository.save(
             FacilityRemoteInfo(
-                id = facility.id,
                 facility = facility,
 
                 remote = remote,
-                phone = phone,
+                phone = phone.replace("-", ""),
                 number = number,
             )
         )
 
+        mqttConnection.listen(info)
+
         return info.toDto()
     }
+
+
+//    override fun setupFacilityRemote(id: Long, dto: FacilityRemoteInfoCreateDto): FacilityRemoteInfoDto {
+//        val (
+//            remoteId: Long,
+//            phone: String,
+//            number: Int,
+//        ) = dto
+//
+//        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
+//        val facility = facilityJpaRepository.findSafe(id)
+//
+//        memberHolder.getUserPermission().validate(Permissions.UPDATE_FACILITY)
+//        val remote = remoteJpaRepository.findSafe(remoteId)
+//
+//        val info = facilityRemoteInfoRepository.save(
+//            FacilityRemoteInfo(
+//                id = facility.id,
+//                facility = facility,
+//
+//                remote = remote,
+//                phone = phone,
+//                number = number,
+//            )
+//        )
+//
+//        return info.toDto()
+//    }
+
+
+
 
     override fun getFacilityRemote(id: Long): FacilityRemoteInfoDto {
         memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)

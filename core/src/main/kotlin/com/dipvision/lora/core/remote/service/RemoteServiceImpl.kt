@@ -8,13 +8,16 @@ import com.dipvision.lora.business.remote.service.RemoteService
 import com.dipvision.lora.core.remote.entity.Remote
 import com.dipvision.lora.core.remote.repository.RemoteJpaRepository
 import com.dipvision.lora.core.remote.toDto
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 class RemoteServiceImpl(
     private val remoteJpaRepository: RemoteJpaRepository,
     private val authService: AuthService,
-) : RemoteService {
+    private val passwordEncoder: PasswordEncoder,
+
+    ) : RemoteService {
 //    override fun createRemote(dto: RemoteCreateDto): RemoteDto {
 //        val (
 //            type: RemoteProvider,
@@ -60,7 +63,7 @@ class RemoteServiceImpl(
                 address,
                 port,
                 username,
-                password,
+                passwordEncoder.encode(password),
                 phone
             )
         )

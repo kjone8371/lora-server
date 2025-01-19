@@ -29,11 +29,7 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/auth/password", "/auth/refresh").authenticated()
-                    .requestMatchers("facilities/**").authenticated()
-                    .requestMatchers("/groups/**").authenticated()
                     .requestMatchers("/auth/**").anonymous() // .permitAll()
-                    .requestMatchers("/images/**").permitAll()
-                    .requestMatchers("/remotes/**").permitAll()
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()
             }
@@ -52,7 +48,8 @@ class SecurityConfig(
                         addAllowedOriginPattern("http://localhost:3000")
                         addAllowedOriginPattern("https://the-one-led.vercel.app")
                         addAllowedOriginPattern("https://front-end-git-main-kyumin1219s-projects.vercel.app")
-                        addAllowedOriginPattern("https://f5cd-218-233-244-111.ngrok-free.app/") // ngrok 주소 허용
+                        addAllowedOriginPattern("https://693a-58-237-120-22.ngrok-free.app/") // ngrok 주소 허용
+                        addAllowedOriginPattern("http://192.168.45.23:3000/")
                         addAllowedHeader("*")
                         addAllowedMethod("*")
                         allowCredentials = true

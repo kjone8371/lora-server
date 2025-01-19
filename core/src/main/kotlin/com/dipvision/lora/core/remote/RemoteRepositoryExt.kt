@@ -7,3 +7,6 @@ import com.dipvision.lora.core.remote.repository.RemoteJpaRepository
 
 fun RemoteJpaRepository.findSafe(id: Long) = WrappedLong(id).fetch(this)
     ?: throw CustomException(RemoteExceptionDetails.REMOTE_NOT_FOUND)
+
+
+
