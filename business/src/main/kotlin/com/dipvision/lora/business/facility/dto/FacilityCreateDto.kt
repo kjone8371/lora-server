@@ -24,5 +24,4 @@ data class FacilityCreateDto(
     val escoStatus: String,
     val powerConsumption: String,
     val billingType: String,
-
 )
