@@ -59,7 +59,7 @@ class Facility(
     var memo: String, // 메모
 
     // 전화번호 필드 - 010-1234-1234-00 형태
-    @Column(nullable = false)
+    @Column(name = "phone_number",nullable = false)
     var phoneNumber: String,  // 예: "010-1234-1234-00"
 
     // 에스코 상태

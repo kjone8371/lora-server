@@ -6,6 +6,5 @@ import com.dipvision.lora.core.remote.entity.Remote
 fun Remote.toDto() = RemoteDto(
     id.get,
     provider,
-    address,
-    phone
+    address
 )

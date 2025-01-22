@@ -32,4 +32,7 @@ class RemoteController(
         val data = remoteService.getRemotes()
         return ResponseData.ok(data = data)
     }
+
+
+
 }

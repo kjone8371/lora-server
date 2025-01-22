@@ -9,5 +9,4 @@ data class RemoteCreateDto(
     val port: Int,
     val username: String?,
     val password: String?,
-    val phone: String,
 )

@@ -12,11 +12,12 @@ import org.springframework.data.geo.Point
 @Document(indexName = "facility")
 @Setting(settingPath = "elastic/nori.json")
 class FacilityDocument(
-    val id: Long,
-    
-    val name: String,
 //    val type: FacilityType, // FIXME: add or remove if required
 //    val status: FacilityStatus,
+
+    val id: Long,
+
+    val name: String,
 
     @Field(type = FieldType.Search_As_You_Type, analyzer = "nori", searchAnalyzer = "nori")
     val address: String,

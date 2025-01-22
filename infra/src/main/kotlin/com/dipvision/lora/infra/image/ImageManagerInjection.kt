@@ -6,7 +6,7 @@ import com.dipvision.lora.infra.image.impl.LocalImageManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-// 원래꺼
+//// 원래꺼
 //@Configuration
 //class ImageManagerInjection {
 //    @Bean
@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration
 // 새로 생긴거 테스트
 @Configuration
 class ImageManagerInjection {
+
 
     @Bean
     fun localImageManager(imageManagerProperties: ImageManagerProperties): ImageManager {

@@ -6,5 +6,4 @@ data class RemoteDto(
     val id: Long,
     val provider: RemoteProvider,
     val address: String,
-    val phone: String?,
 )

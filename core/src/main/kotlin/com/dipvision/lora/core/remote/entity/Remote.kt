@@ -13,7 +13,6 @@ class Remote(
     val port: Int,
     val username: String?,
     val password: String?,
-    val phone: String?,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

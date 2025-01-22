@@ -23,13 +23,8 @@ import com.dipvision.lora.core.facility.toDto
 import com.dipvision.lora.core.image.service.ImageInternalService
 import com.dipvision.lora.core.member.MemberHolder
 import com.dipvision.lora.core.remote.delegate.MqttConnection
-import com.dipvision.lora.core.remote.entity.Remote
 import com.dipvision.lora.core.remote.findSafe
 import com.dipvision.lora.core.remote.repository.RemoteJpaRepository
-import jakarta.persistence.LockModeType
-import org.springframework.data.domain.Slice
-import org.springframework.data.jpa.repository.Lock
-import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -91,118 +86,34 @@ class FacilityServiceImpl(
         return nearbyFacilities.map { it.toDto() }
     }
 
-
-    // 원래 전에 있던거
-//    override fun findFacilitiesByGeo(lat: Double, lon: Double, distance: Double): List<FacilityDto> {
-//        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
-
-//        val ids = facilitySearchRepository.findByPoint(lat, lon, distance).map { it.id }
-//        val found = facilityJpaRepository.findFacilitiesByIdIn(ids)
-//
-//        return found.map { it.toDto() }
-//    }
-
-
-    // 이름 검색 원래 있던거
-//    override fun findFacilitiesByName(
-//        name: String,
-//        pageable: PageRequest,
-//    ): SlicedResponse<FacilityDto> {
-//        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
-//
+//    override fun findFacilitiesByName(name: String, pageable: PageRequest): SlicedResponse<FacilityDto> {
 //        val slice = facilitySearchRepository.findByName(name, ElasticPageRequest(pageable.size, pageable.page))
-//        val found = facilityJpaRepository.findFacilitiesByIdIn(slice.content.map { it.id })
+//        val found = facilityJpaRepository.findFacilitiesByIdIn(slice.data.map { it.id })
 //
-//        return SlicedResponse(slice.hasNext(), slice.size, found.map { it.toDto() })
+//        return SlicedResponse(slice.hasNext, slice.size, found.map { it.toDto() })
 //    }
 
+    override fun findFacilitiesByName(name: String): List<FacilityDto> {
+        // 이름으로 시설 검색
+        val facilities = facilityJpaRepository.findByName(name)
 
-    // 새로운 이름 검색
-    override fun findFacilitiesByName(
-        name: String,
-        pageable: PageRequest,
-    ): SlicedResponse<FacilityDto> {
-        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
-
-        // ElasticSearch에서 결과 조회 (Slice<FacilityDocument> 반환)
-        val slice: Slice<FacilityDocument> = facilitySearchRepository.findByName(name, ElasticPageRequest(pageable.size, pageable.page))
-
-        // ID에 해당하는 시설 정보 조회 (JpaRepository를 통해)
-        val found = facilityJpaRepository.findFacilitiesByIdIn(slice.content.map { it.id })
-
-        // SlicedResponse로 변환하여 반환
-        return SlicedResponse(
-            hasNext = slice.hasNext(),
-            size = slice.size,
-            data = found.map { it.toDto() }  // Facility -> FacilityDto로 변환
-        )
+        // Facility 엔티티를 FacilityDto로 변환
+        return facilities.map { it.toDto() }
     }
 
 
 
-
-
-    override fun findFacilitiesByAddress(address: String, page: Int, size: Int): SlicedResponse<FacilityDto> {
-        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
-
-        val slice = facilitySearchRepository.findByAddress(address, ElasticPageRequest(page, size))
-
+    override fun findFacilitiesByAddress(address: String, pageable: PageRequest): SlicedResponse<FacilityDto> {
+        val slice = facilitySearchRepository.findByAddress(address, ElasticPageRequest(pageable.size, pageable.page))
         val found = facilityJpaRepository.findFacilitiesByIdIn(slice.data.map { it.id })
 
         return SlicedResponse(slice.hasNext, slice.size, found.map { it.toDto() })
     }
 
     override fun findById(id: Long): FacilityDto {
-        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
-
         val facility = facilityJpaRepository.findSafe(id)
         return facility.toDto()
     }
-
-
-//    @Transactional(rollbackFor = [Exception::class])
-//    override fun createFacility(facilityCreateDto: FacilityCreateDto): FacilityDto {
-//        val (
-//            name: String,
-//            type: FacilityType,
-//            status: FacilityStatus,
-//            address: String,
-//            latitude: Double,
-//            longitude: Double,
-//            meterNumber: String,
-//            department: String,
-//            fixture: String,
-//            poleFormat: String,
-//            dimmer: String,
-//
-//
-//
-//        ) = facilityCreateDto
-//
-//        memberHolder.getUserPermission().validate(Permissions.CREATE_FACILITY)
-//
-//
-//        val facility = facilityJpaRepository.save(
-//            Facility(
-//                name,
-//                type,
-//                status,
-//                address,
-//                latitude,
-//                longitude,
-//                meterNumber,
-//                department,
-//                fixture,
-//                poleFormat,
-//                dimmer
-//            )
-//        )
-//
-//        facilitySearchRepository.save(FacilityDocument.fromEntity(facility))
-//
-//        return facility.toDto()
-//    }
-
 
     @Transactional(rollbackFor = [Exception::class])
     override fun createFacility(facilityCreateDto: FacilityCreateDto, multipartFile: MultipartFile?): FacilityDto {
@@ -213,19 +124,17 @@ class FacilityServiceImpl(
             address: String,
             latitude: Double,
             longitude: Double,
-            meterNumber: String,
             department: String,
             fixture: String,
             poleFormat: String,
+            dimmer: String,
             memo: String,
+
             phoneNumber: String,
             escoStatus: String,
             powerConsumption: String,
             billingType: String,
-
         ) = facilityCreateDto
-
-        memberHolder.getUserPermission().validate(Permissions.CREATE_FACILITY)
 
         val image = multipartFile?.let {
             imageInternalService.saveImage(
@@ -243,18 +152,18 @@ class FacilityServiceImpl(
                 latitude,
                 longitude,
 
-                meterNumber,
                 department,
                 fixture,
                 poleFormat,
+                dimmer,
 
                 image,
                 memo,
+
                 phoneNumber,
                 escoStatus,
                 powerConsumption,
-                billingType
-
+                billingType,
             )
         )
         facilitySearchRepository.save(FacilityDocument.fromEntity(facility))
@@ -262,10 +171,8 @@ class FacilityServiceImpl(
         return facility.toDto()
     }
 
-
     @Transactional(rollbackFor = [Exception::class])
     override fun editFacility(id: Long, facilityEditDto: FacilityEditDto, multipartFile: MultipartFile?): FacilityDto {
-        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
         val facility = facilityJpaRepository.findSafe(id)
 
         val (
@@ -280,15 +187,14 @@ class FacilityServiceImpl(
             fixtureOrNull: String?,
             poleFormatOrNull: String?,
             dimmerOrNull: String?,
+
             memoOrNull: String?,
+
             phoneNumberOrNull: String?,
             escoStatusOrNull: String?,
             powerConsumptionOrNull: String?,
             billingTypeOrNull: String?,
-
         ) = facilityEditDto
-
-        memberHolder.getUserPermission().validate(Permissions.UPDATE_FACILITY)
 
         val imageOrNull = multipartFile?.let {
             imageInternalService.saveImage(
@@ -313,6 +219,7 @@ class FacilityServiceImpl(
 
                 image = imageOrNull ?: facility.image
                 memo = memoOrNull ?: facility.memo
+
                 phoneNumber = phoneNumberOrNull ?: facility.phoneNumber
                 escoStatus = escoStatusOrNull ?: facility.escoStatus
                 powerConsumption = powerConsumptionOrNull ?: facility.powerConsumption
@@ -324,65 +231,14 @@ class FacilityServiceImpl(
         return saved.toDto()
     }
 
-
-
-
-//    @Transactional(rollbackFor = [Exception::class])
-//    override fun editFacility(id: Long, facilityEditDto: FacilityEditDto): FacilityDto {
-//        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
-//        val facility = facilityJpaRepository.findSafe(id)
-//
-//        val (
-//            nameOrNull: String?,
-//            typeOrNull: FacilityType?,
-//            statusOrNull: FacilityStatus?,
-//            addressOrNull: String?,
-//            latitudeOrNull: Double?,
-//            longitudeOrNull: Double?,
-//            meterNumberOrNull: String?,
-//            departmentOrNull: String?,
-//            fixtureOrNull: String?,
-//            poleFormatOrNull: String?,
-//            dimmerOrNull: String?
-//        ) = facilityEditDto
-//
-//        memberHolder.getUserPermission().validate(Permissions.UPDATE_FACILITY)
-//        val saved = facilityJpaRepository.save(
-//            facility.apply {
-//                name = nameOrNull ?: facility.name
-//                type = typeOrNull ?: facility.type
-//                status = statusOrNull ?: facility.status
-//
-//                address = addressOrNull ?: facility.address
-//                latitude = latitudeOrNull ?: facility.latitude
-//                longitude = longitudeOrNull ?: facility.longitude
-//                meterNumber = meterNumberOrNull ?: facility.meterNumber
-//                department = departmentOrNull ?: facility.department
-//                fixture = fixtureOrNull ?: facility.fixture
-//                poleFormat = poleFormatOrNull ?: facility.poleFormat
-//                dimmer = dimmerOrNull ?: facility.dimmer
-//
-//            }
-//        )
-//        facilitySearchRepository.save(FacilityDocument.fromEntity(saved))
-//
-//        return saved.toDto()
-//    }
-
+    @Transactional(rollbackFor = [Exception::class])
     override fun deleteFacility(id: Long) {
-        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
         val facility = facilityJpaRepository.findSafe(id)
 
-        memberHolder.getUserPermission().validate(Permissions.DELETE_FACILITY)
         facilityJpaRepository.delete(facility)
         facilitySearchRepository.delete(FacilityDocument.fromEntity(facility))
     }
 
-    @Retryable(
-        value = [OptimisticLockingFailureException::class],
-        maxAttempts = 3,
-        backoff = Backoff(delay = 1000)
-    )
     @Transactional(rollbackFor = [Exception::class])
     override fun setupFacilityRemote(id: Long, dto: FacilityRemoteInfoCreateDto): FacilityRemoteInfoDto {
         val (
@@ -390,11 +246,8 @@ class FacilityServiceImpl(
             phone: String,
             number: Int,
         ) = dto
-
-        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
         val facility = facilityJpaRepository.findSafe(id)
 
-        memberHolder.getUserPermission().validate(Permissions.UPDATE_FACILITY)
         val remote = remoteJpaRepository.findSafe(remoteId)
 
         val info = facilityRemoteInfoRepository.save(
@@ -412,39 +265,7 @@ class FacilityServiceImpl(
         return info.toDto()
     }
 
-
-//    override fun setupFacilityRemote(id: Long, dto: FacilityRemoteInfoCreateDto): FacilityRemoteInfoDto {
-//        val (
-//            remoteId: Long,
-//            phone: String,
-//            number: Int,
-//        ) = dto
-//
-//        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
-//        val facility = facilityJpaRepository.findSafe(id)
-//
-//        memberHolder.getUserPermission().validate(Permissions.UPDATE_FACILITY)
-//        val remote = remoteJpaRepository.findSafe(remoteId)
-//
-//        val info = facilityRemoteInfoRepository.save(
-//            FacilityRemoteInfo(
-//                id = facility.id,
-//                facility = facility,
-//
-//                remote = remote,
-//                phone = phone,
-//                number = number,
-//            )
-//        )
-//
-//        return info.toDto()
-//    }
-
-
-
-
     override fun getFacilityRemote(id: Long): FacilityRemoteInfoDto {
-        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
         val facility = facilityJpaRepository.findSafe(id)
 
         val remoteInfo = facility.remoteInfo
@@ -454,10 +275,8 @@ class FacilityServiceImpl(
     }
 
     override fun toggleFacilityLight(id: Long, dto: FacilityLightToggleDto) {
-        memberHolder.getUserPermission().validate(Permissions.READ_FACILITY)
         val facility = facilityJpaRepository.findSafe(id)
 
-        memberHolder.getUserPermission().validate(Permissions.TEST_FACILITY)
         val (
             isLightOn: Boolean,
             onTime: Int,
@@ -473,6 +292,10 @@ class FacilityServiceImpl(
         mqttConnection.send(remoteInfo, SPacket.SLightTogglePacket(remoteInfo.number, isLightOn, onTime.toShort()))
     }
 
-
-
+    override fun elasticRefresh() {
+        val all = facilityJpaRepository.findAll()
+        for (facility in all) {
+            facilitySearchRepository.save(FacilityDocument.fromEntity(facility))
+        }
+    }
 }

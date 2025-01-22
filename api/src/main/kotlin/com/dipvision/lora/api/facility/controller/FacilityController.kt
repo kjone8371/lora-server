@@ -5,6 +5,7 @@ import com.dipvision.lora.api.facility.dto.FacilityEditRequest
 import com.dipvision.lora.api.facility.dto.FacilityInfoCreateRequest
 import com.dipvision.lora.business.facility.dto.*
 import com.dipvision.lora.business.facility.service.FacilityService
+import com.dipvision.lora.business.remote.dto.RemoteDto
 import com.dipvision.lora.common.exception.CustomException
 import com.dipvision.lora.common.page.PageRequest
 import com.dipvision.lora.common.response.ResponseData
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile
 @SecurityRequirement(name = "Authorization")
 class FacilityController(
     private val facilityService: FacilityService,
+
 
 ) {
 
@@ -113,22 +115,25 @@ class FacilityController(
 //    }
 
     @GetMapping("/search/address")
-//    @CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app/facilities/search/address", "https://the-one-led.vercel.app/facilities/search/address"])
     fun findFacilitiesByAddress(
         @RequestParam address: String,
         pageRequest: PageRequest,
-    ) = facilityService.findFacilitiesByAddress(address, pageRequest.page, pageRequest.size)
+    ) = facilityService.findFacilitiesByAddress(address, pageRequest)
+
+//    @GetMapping("/search/name")
+//    fun findFacilitiesByName(
+//        @RequestParam name: String,
+//        pageRequest: PageRequest,
+//    ) = facilityService.findFacilitiesByName(name, pageRequest)
 
     @GetMapping("/search/name")
-//    @CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app/facilities/search/name", "https://the-one-led.vercel.app/facilities/search/name"])
-    fun findFacilitiesByName(
-        @RequestParam name: String,
-        pageRequest: PageRequest,
-    ) = facilityService.findFacilitiesByName(name, pageRequest)
+    fun finFacilitiesByName(
+        @RequestParam name: String
+    ) = facilityService.findFacilitiesByName(name)
+
 
     // 시설 조회
     @GetMapping("/{id}")
-//    @CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app/facilities/{id}", "https://the-one-led.vercel.app/facilities/{id}"])
     fun findFacilitiesByName(@PathVariable id: Long) = facilityService.findById(id)
 
 
@@ -216,7 +221,6 @@ class FacilityController(
     }
 
     @DeleteMapping("/{id}")
-//    @CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app/facility/{id}", "https://the-one-led.vercel.app/facility/{id}"])
     fun deleteFacility(@PathVariable id: Long): ResponseEntity<ResponseEmpty> {
         facilityService.deleteFacility(id)
         return ResponseEmpty.noContent()
@@ -255,7 +259,22 @@ class FacilityController(
         return ResponseEmpty.noContent()
     }
 
+    @PostMapping("/elastic-refresh")
+    fun elasticRefresh(): ResponseEntity<ResponseEmpty> {
+        facilityService.elasticRefresh()
+        return ResponseEmpty.noContent()
+    }
 
+//    // 클라이언트 연결 상태 확인
+//    @GetMapping("/{id}/status")
+//    fun getClientStatus(@PathVariable id: Long): String {
+//        val isConnected = mqttPool.isClientConnected(id)
+//        return if (isConnected) {
+//            "Client $id is connected."
+//        } else {
+//            "Client $id is not connected."
+//        }
+//    }
 
 
 }

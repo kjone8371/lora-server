@@ -6,18 +6,20 @@ import co.elastic.clients.elasticsearch._types.SortOrder
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders
 import com.dipvision.lora.common.page.SlicedResponse
 import com.dipvision.lora.core.common.pageable.ElasticPageRequest
+import com.dipvision.lora.core.facility.entity.Facility
 import com.dipvision.lora.core.facility.entity.FacilityDocument
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Slice
-import org.springframework.data.domain.SliceImpl
+import com.dipvision.lora.core.facility.repository.FacilityJpaRepository
+import org.springframework.data.domain.*
 import org.springframework.data.elasticsearch.client.elc.NativeQuery
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations
+import org.springframework.data.elasticsearch.core.SearchHits
 import org.springframework.stereotype.Repository
 
 
 @Repository
 class FacilityElasticQueryRepositoryImpl(
     private val elasticsearchOperations: ElasticsearchOperations,
+    private val facilityJpaRepository: FacilityJpaRepository
 ) : FacilityElasticQueryRepository {
     override fun findByPoint(latitude: Double, longitude: Double, distance: Double): List<FacilityDocument> {
         val geoQuery = QueryBuilders.geoDistance {
@@ -52,6 +54,7 @@ class FacilityElasticQueryRepositoryImpl(
             .toList()
     }
 
+
     override fun findByAddress(address: String, pageable: ElasticPageRequest): SlicedResponse<FacilityDocument> {
         val queryString = QueryBuilders.queryString {
             it.defaultField(FacilityDocument::address.name)
@@ -70,45 +73,46 @@ class FacilityElasticQueryRepositoryImpl(
 
         val result = elasticsearchOperations.search(query, FacilityDocument::class.java)
         val data = result.map { it.content }.toList()
-        
+
         val hasNext = pageable.size < data.size
-        
+
         return SlicedResponse(hasNext, if (hasNext) pageable.size else data.size, if (hasNext) data.dropLast(1) else data)
     }
 
-    // 새로 추가함
-    override fun findByName(name: String, pageable: Pageable): Slice<FacilityDocument> {
-        val queryString = QueryBuilders.queryString {
-            it.defaultField(FacilityDocument::name.name)
-                .query(name)
+
+
+    // 이름으로 검색하는 메서드
+    override fun findByName(name: String, pageable: ElasticPageRequest): SlicedResponse<FacilityDocument> {
+        // Match 쿼리를 사용하여 이름을 검색합니다.
+        val matchQuery = QueryBuilders.match {
+            it.field(FacilityDocument::name.name) // 'name' 필드를 검색
+                .query(name) // 이름을 쿼리로 전달
         }
 
+        // NativeQuery 설정
         val query = NativeQuery.builder()
-            .withQuery(queryString)
+            .withQuery(matchQuery) // match 쿼리 사용
             .withSort {
                 it.score { sort ->
-                    sort.order(SortOrder.Desc) // 이름에 대한 일치도 기준으로 정렬
+                    sort.order(SortOrder.Desc) // 점수 내림차순으로 정렬
                 }
             }
-            .withPageable(pageable) // Pageable로 페이징 처리
+            .withPageable(ElasticPageRequest(pageable.page, pageable.size + 1)) // 페이지 및 사이즈 설정
             .build()
 
+        // 쿼리 실행
         val result = elasticsearchOperations.search(query, FacilityDocument::class.java)
 
-        // 검색 결과를 리스트로 변환
+        // 검색 결과
         val data = result.map { it.content }.toList()
 
-        // 총 결과 개수를 기준으로 hasNext를 계산
-        val totalHits = result.totalHits
-        val hasNext = totalHits > (pageable.pageNumber + 1) * pageable.pageSize
-
-        return if (hasNext) {
-            // 마지막 페이지가 아닌 경우에는 한 페이지 더 많은 항목을 반환
-            SliceImpl(data.dropLast(1), pageable, hasNext)
-        } else {
-            // 마지막 페이지라면 그 자체로 반환
-            SliceImpl(data, pageable, hasNext)
-        }
+        // hasNext 계산
+        val hasNext = data.size > pageable.size
+        return SlicedResponse(
+            hasNext,
+            if (hasNext) pageable.size else data.size,
+            if (hasNext) data.dropLast(1) else data
+        )
     }
 
 
