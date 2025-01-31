@@ -1,4 +1,4 @@
-package com.dipvision.lora.core.remote.entity
+package com.dipvision.lora.core.facility.entity
 
 import com.dipvision.lora.core.common.id.WrappedLong
 import java.time.LocalDate

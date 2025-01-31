@@ -29,6 +29,6 @@ fun Facility.toDto() = FacilityDto(
     phoneNumber,
     escoStatus,
     powerConsumption,
-    billingType
-
+    billingType,
+    poleNumber
 )

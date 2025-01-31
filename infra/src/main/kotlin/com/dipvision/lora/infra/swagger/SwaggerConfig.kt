@@ -31,7 +31,7 @@ import java.util.*
 
 @Configuration
 class SwaggerConfig {
-    @Value("\${SPRING_SWAGGER_SERVER_URL:https://693a-58-237-120-22.ngrok-free.app}")
+    @Value("\${SPRING_SWAGGER_SERVER_URL: https://f15a-218-233-244-111.ngrok-free.app }")
     private val serverUrl: String? = null
 
     @Bean

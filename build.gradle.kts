@@ -59,6 +59,8 @@ allprojects {
     dependencies {
         /// SPRING BOOT
         api("org.springframework.boot:spring-boot-starter-web")
+        implementation("org.apache.poi:poi-ooxml:5.2.3") // 기존 POI 라이브러리
+        implementation("org.apache.commons:commons-compress:1.26.0") // 최신 버전 명시
 
         /// KOTLIN
         implementation(kotlin("reflect"))

@@ -22,4 +22,9 @@ value class Permission(private val value: Long) : Iterable<Permissions> {
             return permission.value and this == permission.value
         }
     }
+
+    // 권한이 있는지 확인하는 함수
+    fun hasPermission(permission: Permission): Boolean {
+        return this.contains(permission)
+    }
 }

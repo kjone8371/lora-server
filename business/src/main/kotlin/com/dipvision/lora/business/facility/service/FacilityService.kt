@@ -3,6 +3,8 @@ package com.dipvision.lora.business.facility.service
 import com.dipvision.lora.business.facility.dto.*
 import com.dipvision.lora.common.page.PageRequest
 import com.dipvision.lora.common.page.SlicedResponse
+import com.dipvision.lora.common.permission.Permission
+import com.dipvision.lora.common.permission.Permissions
 import org.springframework.web.multipart.MultipartFile
 
 interface FacilityService {
@@ -15,7 +17,7 @@ interface FacilityService {
     fun findFacilitiesByAddress(address: String, pageable: PageRequest): SlicedResponse<FacilityDto>
     fun findById(id: Long): FacilityDto
 
-    fun createFacility(facilityCreateDto: FacilityCreateDto, multipartFile: MultipartFile?): FacilityDto
+    fun createFacility(facilityCreateDto: FacilityCreateDto): FacilityDto
     fun editFacility(id: Long, facilityEditDto: FacilityEditDto, multipartFile: MultipartFile?): FacilityDto
     fun deleteFacility(id: Long)
 
@@ -23,5 +25,9 @@ interface FacilityService {
     fun getFacilityRemote(id: Long): FacilityRemoteInfoDto
 
     fun toggleFacilityLight(id: Long, dto: FacilityLightToggleDto)
-     fun elasticRefresh()
+    fun elasticRefresh()
+
+//    fun findByIdRemoteStatus():
+
+    fun saveFacilitiesFromExcel(multipartFile: MultipartFile)
 }

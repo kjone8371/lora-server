@@ -2,33 +2,35 @@ package com.dipvision.lora.api.facility.controller
 
 import com.dipvision.lora.api.facility.dto.FacilityCreateRequest
 import com.dipvision.lora.api.facility.dto.FacilityEditRequest
-import com.dipvision.lora.api.facility.dto.FacilityInfoCreateRequest
 import com.dipvision.lora.business.facility.dto.*
 import com.dipvision.lora.business.facility.service.FacilityService
-import com.dipvision.lora.business.remote.dto.RemoteDto
-import com.dipvision.lora.common.exception.CustomException
 import com.dipvision.lora.common.page.PageRequest
+import com.dipvision.lora.common.permission.Permission
+import com.dipvision.lora.common.permission.Permissions
 import com.dipvision.lora.common.response.ResponseData
 import com.dipvision.lora.common.response.ResponseEmpty
 import dev.jombi.blog.common.multipart.ValidImageFile
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.multipart.MultipartFile
 
 
 @RestController
-//@CrossOrigin(origins = ["https://4b78-218-233-244-111.ngrok-free.app", "https://the-one-led.vercel.app"])
 @RequestMapping("/facilities")
 @SecurityRequirement(name = "Authorization")
 class FacilityController(
     private val facilityService: FacilityService,
 
 
-) {
+    ) {
 
 //     시설 경도 위도 검색
 //    @GetMapping("/search/{lat}/{lng}")
@@ -41,34 +43,97 @@ class FacilityController(
 
 
     // 일단 보류 (경도 위도)
-//    @CrossOrigin(origins = ["http://localhost:3000", "https://4b78-218-233-244-111.ngrok-free.app/facilities/search/{lat}/{lng}", "https://the-one-led.vercel.app/facilities/search/{lat}/{lng}"])
+//    @GetMapping("/search/{lat}/{lng}")
+//    fun findFacilitiesByGeo(
+//        @PathVariable lat: Double,
+//        @PathVariable lng: Double
+//    ): ResponseEntity<List<FacilityDto>> {
+//        return try {
+//            val facilities: List<FacilityDto> = facilityService.findFacilitiesByGeo(lat, lng, 1000.0)
+//            if (facilities.isNotEmpty()) {
+//                ResponseEntity.ok(facilities)
+//            } else {
+//                ResponseEntity.status(HttpStatus.NO_CONTENT).body(emptyList())
+//            }
+//        } catch (e: IllegalArgumentException) {
+//            // 잘못된 매개변수 처리
+//            println("Invalid argument: ${e.message}")
+//            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(emptyList())
+//        } catch (e: IllegalStateException) {
+//            // 비정상 상태 처리
+//            println("Illegal state: ${e.message}")
+//            ResponseEntity.status(HttpStatus.CONFLICT).body(emptyList())
+//        } catch (e: Exception) {
+//            // 기타 예외 처리
+//            println("Unexpected error: ${e.message}")
+//            e.printStackTrace() // 스택 트레이스 출력
+//            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(emptyList())
+//        }
+//    }
+
+//    @GetMapping("/search/{lat}/{lng}")
+//    fun findFacilitiesByGeo(
+//        @PathVariable lat: Double,
+//        @PathVariable lng: Double
+//    ): ResponseEntity<List<FacilityDto>> {
+//        return try {
+//
+//            // 서비스 메서드를 호출하며, userPermission을 전달합니다.
+//            val facilities: List<FacilityDto> = facilityService.findFacilitiesByGeo(lat, lng, 50.0)
+//
+//            // 결과 반환
+//            if (facilities.isNotEmpty()) {
+//                ResponseEntity.ok(facilities)
+//            } else {
+//                ResponseEntity.status(HttpStatus.NO_CONTENT).body(emptyList())
+//            }
+//        } catch (e: IllegalArgumentException) {
+//            // 잘못된 매개변수 처리
+//            println("Invalid argument: ${e.message}")
+//            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(emptyList())
+//        } catch (e: IllegalStateException) {
+//            // 비정상 상태 처리
+//            println("Illegal state: ${e.message}")
+//            ResponseEntity.status(HttpStatus.CONFLICT).body(emptyList())
+//        } catch (e: Exception) {
+//            // 기타 예외 처리
+//            println("Unexpected error: ${e.message}")
+//            e.printStackTrace() // 스택 트레이스 출력
+//            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(emptyList())
+//        }
+//    }
+
     @GetMapping("/search/{lat}/{lng}")
     fun findFacilitiesByGeo(
         @PathVariable lat: Double,
         @PathVariable lng: Double
     ): ResponseEntity<List<FacilityDto>> {
         return try {
-            val facilities: List<FacilityDto> = facilityService.findFacilitiesByGeo(lat, lng, 1000.0)
+
+            // 권한에 맞는 시설만 가져오기
+            val facilities: List<FacilityDto> = facilityService.findFacilitiesByGeo(lat, lng, 50.0)
+
+            // 결과 반환
             if (facilities.isNotEmpty()) {
                 ResponseEntity.ok(facilities)
             } else {
                 ResponseEntity.status(HttpStatus.NO_CONTENT).body(emptyList())
             }
         } catch (e: IllegalArgumentException) {
-            // 잘못된 매개변수 처리
             println("Invalid argument: ${e.message}")
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(emptyList())
         } catch (e: IllegalStateException) {
-            // 비정상 상태 처리
             println("Illegal state: ${e.message}")
             ResponseEntity.status(HttpStatus.CONFLICT).body(emptyList())
         } catch (e: Exception) {
-            // 기타 예외 처리
             println("Unexpected error: ${e.message}")
-            e.printStackTrace() // 스택 트레이스 출력
+            e.printStackTrace()
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(emptyList())
         }
     }
+
+
+
 
 
 
@@ -144,10 +209,6 @@ class FacilityController(
         @RequestPart("data", required = true)
         request: FacilityCreateRequest,
 
-        @Valid
-        @ValidImageFile([MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE], 10L * 1024L * 1024L)
-        @RequestPart(name = "image", required = false)
-        multipartFile: MultipartFile?,
     ): ResponseEntity<ResponseData<FacilityDto>> {
         val dto = facilityService.createFacility(
             FacilityCreateDto(
@@ -169,8 +230,8 @@ class FacilityController(
                 request.escoStatus,
                 request.powerConsumption,
                 request.billingType,
-            ),
-            multipartFile
+                request.poleNumber,
+            )
         )
 
         return ResponseData.ok(data = dto)
@@ -213,6 +274,7 @@ class FacilityController(
                 request.escoStatus,
                 request.powerConsumption,
                 request.billingType,
+                request.poleNumber
             ),
             multipartFile
         )
@@ -265,16 +327,29 @@ class FacilityController(
         return ResponseEmpty.noContent()
     }
 
-//    // 클라이언트 연결 상태 확인
-//    @GetMapping("/{id}/status")
-//    fun getClientStatus(@PathVariable id: Long): String {
-//        val isConnected = mqttPool.isClientConnected(id)
-//        return if (isConnected) {
-//            "Client $id is connected."
-//        } else {
-//            "Client $id is not connected."
-//        }
+    // 특정 장치 상태 조회
+//    @GetMapping("/{id}/statuses")
+//    fun getStatusById(@PathVariable id: Long): FacilityRemoteStatus {
+//        return facilityRemoteStatusRepository.findById(id)
+//            .orElseThrow { IllegalArgumentException("FacilityRemoteStatus with ID $id not found") }
 //    }
+
+
+    @Operation(
+        summary = "엑셀 파일 업로드",
+        description = "엑셀 파일을 업로드하여 시설 정보를 저장합니다."
+    )
+    @PostMapping("/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun uploadExcel(
+        @RequestParam("file") file: MultipartFile // file 파라미터로 받을 경우
+    ): ResponseEntity<String> {
+        return try {
+            facilityService.saveFacilitiesFromExcel(file) // 서비스 메서드 호출
+            ResponseEntity.ok("Excel 데이터가 성공적으로 저장되었습니다.")
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().body("오류 발생: ${e.message}")
+        }
+    }
 
 
 }

@@ -31,5 +31,14 @@ enum class Permissions(val permission: Permission) {
     CREATE_GROUP(Permission(1L shl 20)),
     UPDATE_GROUP(Permission(1L shl 21)),
     DELETE_GROUP(Permission(1L shl 22)),
+
+    SEOUL(Permission(1L shl 23)),
+    BUSAN(Permission(1L shl 24)),
+    DAEGU(Permission(1L shl 25)),
+    INCHEON(Permission(1L shl 26)),
+    GWANGJU(Permission(1L shl 27)),
+    DAEJEON(Permission(1L shl 28)),
+    ULSAN(Permission(1L shl 29)),
+    SEJONG(Permission(1L shl 30)),
     ;
 }

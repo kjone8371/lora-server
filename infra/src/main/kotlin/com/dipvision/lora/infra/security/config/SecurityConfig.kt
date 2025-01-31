@@ -50,7 +50,7 @@ class SecurityConfig(
                         addAllowedOriginPattern("https://the-one-led.vercel.app")
                         addAllowedOriginPattern("https://front-end-git-main-kyumin1219s-projects.vercel.app")
                         addAllowedOriginPattern("http://localhost:8080")
-                        addAllowedOriginPattern("https://693a-58-237-120-22.ngrok-free.app/") // ngrok 주소 허용
+                        addAllowedOriginPattern("https://f15a-218-233-244-111.ngrok-free.app/") // ngrok 주소 허용
                         addAllowedOriginPattern("http://192.168.45.23:3000/")
                         addAllowedHeader("*")
                         addAllowedMethod("*")

@@ -63,7 +63,11 @@ class MqttPool(
                     val packet = DPacket.deserialize(bytes)
 
                     logger.info("Packet Received: {}", packet)
+
                     // TODO: Track status change
+
+
+
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -112,4 +116,7 @@ class MqttPool(
             payload = packet.serialize()
         )
     }
+
+
+
 }
